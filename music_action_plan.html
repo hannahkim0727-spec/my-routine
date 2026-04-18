@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아티스트 데일리 루틴 🎨</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --glass-bg: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --primary: #6c5ce7;
+            --primary-hover: #a29bfe;
+            --accent-1: #fd79a8;
+            --accent-2: #00cec9;
+            --success: #fff;
+            --success-bg: linear-gradient(135deg, #a29bfe, #fd79a8);
+            --cell-size: 36px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(253, 121, 168, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 90% 20%, rgba(108, 92, 231, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 40% 80%, rgba(0, 206, 201, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 80% 90%, rgba(255, 234, 167, 0.3) 0%, transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        /* Ambient floating shapes for artistic vibe */
+        .ambient-shape {
+            position: fixed;
+            filter: blur(60px);
+            opacity: 0.6;
+            z-index: 0;
+            pointer-events: none;
+            border-radius: 50%;
+            animation: floatShape 20s infinite alternate ease-in-out;
+        }
+        .shape-1 { width: 300px; height: 300px; background: #fd79a8; top: -10%; left: -10%; }
+        .shape-2 { width: 400px; height: 400px; background: #6c5ce7; bottom: -10%; right: -5%; animation-delay: -5s; }
+        .shape-3 { width: 250px; height: 250px; background: #00cec9; top: 40%; left: 50%; animation-duration: 25s; }
+
+        @keyframes floatShape {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(50px) scale(1.1); }
+            100% { transform: translateY(-30px) scale(0.9); }
+        }
+
+        .dashboard {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            min-height: 100vh;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s;
+            padding: 8px 16px;
+            background: var(--glass-bg);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+        .back-link:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(108, 92, 231, 0.15); }
+
+        header { text-align: center; margin-bottom: 3.5rem; }
+        .header-title h1 {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #2d3436, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        /* Month Navigation */
+        .month-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 2rem;
+        }
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--glass-border);
+            color: var(--primary);
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .nav-btn:hover {
+            background: #fff;
+            color: var(--accent-1);
+            transform: scale(1.15) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(253, 121, 168, 0.2);
+        }
+        .current-month {
+            font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        /* Tracker Table */
+        .tracker-container {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            overflow-x: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05),
+                        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .tracker-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 4px;
+            min-width: 900px;
+        }
+
+        .tracker-table th, .tracker-table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 2px;
+        }
+
+        .tracker-table th {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            padding-bottom: 15px;
+        }
+
+        .routine-name-col {
+            text-align: left !important;
+            padding-left: 10px !important;
+            min-width: 220px;
+        }
+
+        .routine-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 14px;
+            font-size: 0.95rem;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            color: var(--primary);
+            transition: transform 0.2s;
+        }
+        .routine-item:hover { transform: translateX(3px); }
+        .routine-item .emoji { font-size: 1.3rem; transition: transform 0.2s; cursor: pointer; }
+        .routine-item .emoji:hover { transform: scale(1.2); }
+        .routine-item .text-span { flex: 1; cursor: pointer; transition: color 0.2s; border-bottom: 1px dashed transparent; }
+        .routine-item .text-span:hover { color: var(--accent-1); border-bottom: 1px dashed var(--accent-1); }
+
+        .day-cell {
+            width: var(--cell-size);
+            height: var(--cell-size);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.5);
+            font-size: 1.1rem;
+            color: transparent;
+        }
+
+        .day-cell:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--primary);
+            transform: scale(1.15) translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.15);
+        }
+
+        .day-cell.checked {
+            background: var(--success-bg);
+            border-color: transparent;
+            color: var(--success);
+            box-shadow: 0 5px 15px rgba(253, 121, 168, 0.3);
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .day-cell.checked::after {
+            content: '✦';
+            font-size: 1.2rem;
+            animation: popIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        .day-cell.today {
+            border: 2px solid var(--accent-1);
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        .day-cell.future {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: transparent;
+        }
+        .day-cell.future:hover { 
+            transform: none; 
+            background: transparent; 
+            border-color: rgba(255, 255, 255, 0.5); 
+            box-shadow: none;
+        }
+
+        .progress-col {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--accent-1);
+            min-width: 50px;
+        }
+
+        /* Editing habits */
+        .add-routine-row { 
+            margin-top: 2.5rem; 
+            display: flex; 
+            gap: 12px; 
+            background: rgba(255, 255, 255, 0.5);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        .add-routine-row input {
+            background: #fff;
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 12px 18px;
+            border-radius: 12px;
+            outline: none;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 500;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+            transition: all 0.3s;
+        }
+        .add-routine-row input:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+        .add-routine-row input::placeholder { color: #a4b0be; }
+
+        .add-routine-row .btn-add {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: #fff;
+            border: none;
+            padding: 0 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+        .add-routine-row .btn-add:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
+        }
+        
+        .btn-delete {
+            background: none; border: none; color: #dfe4ea; cursor: pointer; padding-left: 8px; font-size: 1.2rem; transition: color 0.2s;
+        }
+        .btn-delete:hover { color: var(--accent-1); }
+
+        @media (max-width: 768px) {
+            .tracker-container { padding: 1.5rem; }
+            :root { --cell-size: 30px; }
+            .header-title h1 { font-size: 2.2rem; }
+            .add-routine-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-shape shape-1"></div>
+    <div class="ambient-shape shape-2"></div>
+    <div class="ambient-shape shape-3"></div>
+
+    <div class="dashboard">
+        <a href="inner_note.html" class="back-link">← 노트로 돌아가기</a>
+
+        <header>
+            <div class="header-title">
+                <h1>Artist Daily Palette</h1>
+                <p>매일 찍는 작은 점들이 모여 나만의 가장 눈부신 예술(Art)이 됩니다.<br>나를 채우고, 영감을 기록하세요.</p>
+            </div>
+        </header>
+
+        <div class="month-header">
+            <button class="nav-btn" id="btn-prev">◀</button>
+            <div class="current-month" id="current-month-display">2026. 04</div>
+            <button class="nav-btn" id="btn-next">▶</button>
+        </div>
+
+        <div class="tracker-container">
+            <table class="tracker-table" id="tracker-table">
+                <thead>
+                    <tr id="table-header-row">
+                        <!-- headers inserted by JS -->
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- rows inserted by JS -->
+                </tbody>
+            </table>
+
+            <div class="add-routine-row">
+                <input type="text" id="emoji-in" placeholder="이모지(🎧)" style="width: 100px; text-align: center;">
+                <input type="text" id="habit-in" placeholder="아티스트로서 추가할 루틴을 입력하세요..." style="flex:1;">
+                <button class="btn-add" id="btn-add">팔레트에 추가</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Structure
+        const defaultHabits = [
+            { id: 1, text: '자기 전 1시간 음악 감샤워', emoji: '🎧' },
+            { id: 2, text: '건반과 함께 2시간 유희', emoji: '🎹' },
+            { id: 3, text: '가장 편안한 발성 스케일 30분', emoji: '🗣️' },
+            { id: 4, text: '자작곡 스케치 / 나의 감정 한 줄 쓰기', emoji: '✍️' },
+            { id: 5, text: '레퍼런스 아티스트 무대 디깅(Digging)', emoji: '👀' },
+            { id: 6, text: '일상의 틈에 나만의 낭만 BGM 깔기', emoji: '☕' },
+            { id: 7, text: '길 위에서 이어폰 꽂고 내적 댄스', emoji: '💃' }
+        ];
+
+        let state = JSON.parse(localStorage.getItem('singer_routine_data'));
+        if (!state) {
+            state = { habits: defaultHabits, checks: {} };
+        } else if (!state.habits || state.habits.length === 0) {
+            state.habits = defaultHabits;
+        } else {
+            // 과거 문구 세련되게 자동 업데이트
+            state.habits.forEach(h => {
+                if (h.text === '자투리 시간 음악으로 낭만 타임') h.text = '일상의 틈에 나만의 낭만 BGM 깔기';
+                if (h.text === '이동 시간 음악 들으며 둠칫') h.text = '길 위에서 이어폰 꽂고 내적 댄스';
+            });
+            
+            // 아직 추가되지 않은 경우 밀어넣기
+            const newTexts = ['일상의 틈에 나만의 낭만 BGM 깔기', '길 위에서 이어폰 꽂고 내적 댄스'];
+            newTexts.forEach((t, i) => {
+                if (!state.habits.some(h => h.text === t)) {
+                    state.habits.push({ id: Date.now() + i, text: t, emoji: t.includes('댄스') ? '💃' : '☕' });
+                }
+            });
+            saveData();
+        }
+
+        const todayDate = new Date();
+        let displayYear = todayDate.getFullYear();
+        let displayMonth = todayDate.getMonth(); // 0-11
+
+        const monthDisplay = document.getElementById('current-month-display');
+        const theadRow = document.getElementById('table-header-row');
+        const tbody = document.getElementById('table-body');
+        
+        function saveData() {
+            localStorage.setItem('singer_routine_data', JSON.stringify(state));
+        }
+
+        function render() {
+            monthDisplay.textContent = `${displayYear}. ${String(displayMonth + 1).padStart(2,'0')}`;
+            
+            const daysInMonth = new Date(displayYear, displayMonth + 1, 0).getDate();
+            const isCurrentMonth = (displayYear === todayDate.getFullYear() && displayMonth === todayDate.getMonth());
+            const currentDay = todayDate.getDate();
+
+            theadRow.innerHTML = `<th class="routine-name-col">My Routine Palette</th>`;
+            for (let d = 1; d <= daysInMonth; d++) {
+                theadRow.innerHTML += `<th>${d}</th>`;
+            }
+            theadRow.innerHTML += `<th>%</th>`; 
+
+            tbody.innerHTML = '';
+            
+            state.habits.forEach(habit => {
+                const tr = document.createElement('tr');
+                
+                const nameTd = document.createElement('td');
+                nameTd.className = 'routine-name-col';
+                nameTd.innerHTML = `
+                    <div class="routine-item">
+                        <span class="emoji" title="클릭해서 이모지 수정" onclick="editEmoji(${habit.id})">${habit.emoji}</span>
+                        <span class="text-span" title="클릭해서 내용 수정" onclick="editHabit(${habit.id})">${habit.text}</span>
+                        <button class="btn-delete" title="삭제" onclick="deleteHabit(${habit.id})">×</button>
+                    </div>
+                `;
+                tr.appendChild(nameTd);
+
+                let checkedCount = 0;
+                let dayPassedCount = isCurrentMonth ? currentDay : daysInMonth;
+                if (displayYear > todayDate.getFullYear() || (displayYear === todayDate.getFullYear() && displayMonth > todayDate.getMonth())) {
+                    dayPassedCount = 0;
+                }
+
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const td = document.createElement('td');
+                    const div = document.createElement('div');
+                    div.className = 'day-cell';
+                    
+                    const dateKey = `${displayYear}-${String(displayMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                    
+                    if (state.checks[dateKey] && state.checks[dateKey].includes(habit.id)) {
+                        div.classList.add('checked');
+                        if (d <= dayPassedCount) checkedCount++; 
+                    }
+
+                    if (isCurrentMonth && d === currentDay) {
+                        div.classList.add('today');
+                    } else if ((isCurrentMonth && d > currentDay) || displayYear > todayDate.getFullYear() || (displayYear === todayDate.getFullYear() && displayMonth > todayDate.getMonth())) {
+                        div.classList.add('future');
+                    }
+
+                    div.onclick = () => toggleCheck(habit.id, dateKey, div);
+
+                    td.appendChild(div);
+                    tr.appendChild(td);
+                }
+
+                const progTd = document.createElement('td');
+                progTd.className = 'progress-col';
+                let percent = dayPassedCount > 0 ? Math.round((checkedCount / dayPassedCount) * 100) : 0;
+                progTd.textContent = `${percent}%`;
+                
+                tr.appendChild(progTd);
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleCheck(habitId, dateKey, element) {
+            if (element.classList.contains('future')) return;
+
+            if (!state.checks[dateKey]) state.checks[dateKey] = [];
+            
+            const index = state.checks[dateKey].indexOf(habitId);
+            if (index > -1) {
+                state.checks[dateKey].splice(index, 1);
+                element.classList.remove('checked');
+            } else {
+                state.checks[dateKey].push(habitId);
+                element.classList.add('checked');
+            }
+            saveData();
+            setTimeout(render, 150); 
+        }
+
+        function addHabit() {
+            const emoji = document.getElementById('emoji-in').value || '✨';
+            const text = document.getElementById('habit-in').value.trim();
+            if (!text) return;
+
+            const newId = Date.now();
+            state.habits.push({ id: newId, text, emoji });
+            saveData();
+            
+            document.getElementById('emoji-in').value = '';
+            document.getElementById('habit-in').value = '';
+            render();
+        }
+
+        function deleteHabit(id) {
+            if (confirm('이 루틴을 지우시겠습니까?')) {
+                state.habits = state.habits.filter(h => h.id !== id);
+                saveData();
+                render();
+            }
+        }
+
+        function editHabit(id) {
+            const habit = state.habits.find(h => h.id === id);
+            if (!habit) return;
+            const newText = prompt('루틴 내용을 어떤 것으로 바꿀까요?', habit.text);
+            if (newText !== null && newText.trim() !== '') {
+                habit.text = newText.trim();
+                saveData();
+                render();
+            }
+        }
+
+        function editEmoji(id) {
+            const habit = state.habits.find(h => h.id === id);
+            if (!habit) return;
+            const newEmoji = prompt('새로운 이모지를 입력하세요:', habit.emoji);
+            if (newEmoji !== null && newEmoji.trim() !== '') {
+                habit.emoji = newEmoji.trim();
+                saveData();
+                render();
+            }
+        }
+
+        document.getElementById('btn-prev').addEventListener('click', () => {
+            displayMonth--;
+            if (displayMonth < 0) { displayMonth = 11; displayYear--; }
+            render();
+        });
+        
+        document.getElementById('btn-next').addEventListener('click', () => {
+            displayMonth++;
+            if (displayMonth > 11) { displayMonth = 0; displayYear++; }
+            render();
+        });
+
+        document.getElementById('btn-add').addEventListener('click', addHabit);
+        
+        document.getElementById('habit-in').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addHabit();
+        });
+
+        render();
+    </script>
+</body>
+</html>
